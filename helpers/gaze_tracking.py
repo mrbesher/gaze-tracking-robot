@@ -6,18 +6,18 @@ from math import isclose
 from helpers.facemesh import FaceMesh
 
 def init_distances_dict():
-        return {
-            'r_eyelid_dist': [],
-            'r_inner_dist': [],
-            'r_outer_dist': [],
-            'r_top_dist': [],
-            'r_bottom_dist': [],
-            'l_eyelid_dist': [],
-            'l_inner_dist': [],
-            'l_outer_dist': [],
-            'l_top_dist': [],
-            'l_bottom_dist': []
-        }
+    return {
+        'r_eyelid_dist': [],
+        'r_inner_dist': [],
+        'r_outer_dist': [],
+        'r_top_dist': [],
+        'r_bottom_dist': [],
+        'l_eyelid_dist': [],
+        'l_inner_dist': [],
+        'l_outer_dist': [],
+        'l_top_dist': [],
+        'l_bottom_dist': []
+    }
 
 def cmp_with_tol(a, b, tol=6e-2):
     if isclose(a, b, rel_tol=tol):

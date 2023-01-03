@@ -2,9 +2,24 @@ import cv2
 import numpy as np
 import mediapipe as mp
 
+from mediapipe.python.solutions import face_mesh_connections
+from mediapipe.python.solutions.drawing_utils import DrawingSpec
+
 mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
 mp_face_mesh = mp.solutions.face_mesh
+
+IRIS_BGR = (0, 139, 69)
+
+
+def get_default_face_mesh_iris_connections_style():
+    face_mesh_iris_connections_style = {}
+    left_spec = DrawingSpec(color=IRIS_BGR, thickness=2)
+    for connection in face_mesh_connections.FACEMESH_LEFT_IRIS:
+        face_mesh_iris_connections_style[connection] = left_spec
+    right_spec = DrawingSpec(color=IRIS_BGR, thickness=2)
+    for connection in face_mesh_connections.FACEMESH_RIGHT_IRIS:
+        face_mesh_iris_connections_style[connection] = right_spec
+    return face_mesh_iris_connections_style
 
 
 class FaceMesh:
@@ -62,7 +77,7 @@ class FaceMesh:
     def get_annotated_image(self):
         if self.image is None:
             return None
-        
+
         image = self.image.copy()
         image.flags.writeable = True
         if self.face_landmarks is None:
@@ -73,10 +88,9 @@ class FaceMesh:
             landmark_list=self.face_landmarks,
             connections=mp_face_mesh.FACEMESH_IRISES,
             landmark_drawing_spec=None,
-            connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_iris_connections_style())
+            connection_drawing_spec=get_default_face_mesh_iris_connections_style())
 
         return image
-
 
     def get_distances(self):
         if self.face_landmarks is None:
@@ -85,7 +99,8 @@ class FaceMesh:
         landmarks = self.face_landmarks.landmark
 
         # use two points for scaling from the outer mesh
-        reference_dist = self.calc_euclidean(landmarks[self.MESH_TOP], landmarks[self.MESH_BOTTOM])
+        reference_dist = self.calc_euclidean(
+            landmarks[self.MESH_TOP], landmarks[self.MESH_BOTTOM])
 
         l_eyelid_dist = self.calc_euclidean(
             landmarks[self.LEFT_TOP], landmarks[self.LEFT_BOTTOM])
