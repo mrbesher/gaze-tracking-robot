@@ -2,14 +2,13 @@ import argparse
 import os
 import threading
 from time import sleep
+import time
 import cv2
 import customtkinter
 
 from PIL import Image
 from helpers.gaze_tracking import GazeTracker, GazeDirection
 from helpers.robot_control import RobotController
-
-TICK_INTERVAL = int(1 / 30 * 1000) # ms
 
 BLUE_COLOR = '#003366'
 DARKBLUE_COLOR = '#032140'
@@ -75,14 +74,8 @@ class App(customtkinter.CTk):
         # select default frame
         self.frame.grid(row=0, column=1, sticky='nsew')
         
-        self.stop_event = threading.Event()
-        self.frame.after(TICK_INTERVAL, self.update_image)
-
-
-    def video_loop(self):
-        while not self.stop_event.is_set():
-            sleep(TICK_INTERVAL / 1000)
-            self.update_image()
+        self.cmd_timestamp = time.time()
+        self.frame.after(500, self.update_image)
 
     def update_image(self):
         if not self.cap.isOpened():
@@ -111,6 +104,7 @@ class App(customtkinter.CTk):
 
         self.image_label.configure(image=image)
         self.image_label.image = image
+        time_delta = round((time.time() - self.cmd_timestamp) * 1000)
 
         # Update direction label text and color
         status_text = '[Enabled]' if self.camera_control else '[Disabled]'
@@ -123,10 +117,12 @@ class App(customtkinter.CTk):
             self.message_label.configure(text=f'Direction: Unknown\n{status_text}', bg_color='#d8951a')
         else:
             self.message_label.configure(text=f'Direction: {direction.name}\n{status_text}', bg_color='green')
-            if self.camera_control:
-                gaze_control_mapping[direction](duration=TICK_INTERVAL)
+            if self.camera_control and time_delta > cmd_duration:
+                print(f'{direction.name}, {cmd_duration}')
+                gaze_control_mapping[direction](duration=cmd_duration)
+                self.cmd_timestamp = time.time()
 
-        self.frame.after(TICK_INTERVAL, self.update_image)
+        self.frame.after(10, self.update_image)
 
 
     def on_closing(self, *kwargs):
@@ -149,7 +145,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('ip', type=str, help='The IP address of the robot')
     parser.add_argument('--dry-run', action='store_true', help='Do not send commands to the robot')
+    parser.add_argument('--cmd-dur', type=int, default=250, help='The duration to apply each command. (ms)')
     args = parser.parse_args()
+
+    cmd_duration = args.cmd_dur
 
     if args.dry_run:
         rc = DummyRobotController(args.ip)
