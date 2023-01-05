@@ -118,7 +118,6 @@ class App(customtkinter.CTk):
         else:
             self.message_label.configure(text=f'Direction: {direction.name}\n{status_text}', bg_color='green')
             if self.camera_control and time_delta > cmd_duration:
-                print(f'{direction.name}, {cmd_duration}')
                 gaze_control_mapping[direction](duration=cmd_duration)
                 self.cmd_timestamp = time.time()
 
