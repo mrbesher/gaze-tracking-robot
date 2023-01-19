@@ -1,7 +1,7 @@
 # Gaze Controlled Robot
 ## Usage
 1. Clone this repository to your local machine.
-2. Run pip install -r requirements.txt to install the required dependencies.
+2. Run `pip install -r requirements.txt` to install the required dependencies.
 3. Boot the robot system and learn its ip address (see [robot control](helpers/robot_control.cpp)).
 4. Run the script by executing `python main.py ip [args]`
 5. Calibrate the gaze tracker by clicking the "Calibrate" button while looking at the center.
