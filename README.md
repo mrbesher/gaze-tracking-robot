@@ -7,6 +7,8 @@
 5. Calibrate the gaze tracker by clicking the "Calibrate" button while looking at the center.
 6. Control the robot by looking up (forward), right (turn right), left (turn left), down (backward), center (no move).
 
+To run the code without a connection to the robot use `--dry-run` (see `--help` for more).
+
 ## Examples
 | Screenshot | Description |
 | --- | --- |
