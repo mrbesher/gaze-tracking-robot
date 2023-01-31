@@ -22,4 +22,4 @@ To run the code without a connection to the robot use `--dry-run` (see `--help` 
 
 ## License
 
-This repository is licensed under the MIT license. Please see the LICENSE file for more information.
+This repository is licensed under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
